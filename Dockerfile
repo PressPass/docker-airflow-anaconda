@@ -1,11 +1,7 @@
-# VERSION 1.10.1
-# AUTHOR: Matthieu "Puckel_" Roisil
-# DESCRIPTION: Basic Airflow container
-# BUILD: docker build --rm -t puckel/docker-airflow .
-# SOURCE: https://github.com/puckel/docker-airflow
+FROM continuumio/anaconda3
+RUN conda install -c conda-forge python-annoy
+#RUN conda install -c conda-forge/label/gcc7 python-annoy
 
-FROM python:3.6-slim
-LABEL maintainer="Puckel_"
 
 # Never prompts the user for choices on installation/configuration of packages
 ENV DEBIAN_FRONTEND noninteractive
@@ -80,4 +76,6 @@ EXPOSE 8080 5555 8793
 USER airflow
 WORKDIR ${AIRFLOW_HOME}
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["webserver"] # set default arg for entrypoint
+
+# set default arg for entrypoint
+CMD ["webserver"]
