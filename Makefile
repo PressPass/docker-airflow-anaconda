@@ -8,5 +8,8 @@ build: ## builds docker images
 up: ## gets orchestration up and running
 	docker-compose -f local.yml up
 
+down: ## turns off the instances
+	docker-compose -f local.yml down
+
 airflow-sh: ## gets orchestration up and running
 	docker-compose -f local.yml run airflow bash
