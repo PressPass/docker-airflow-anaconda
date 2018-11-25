@@ -8,6 +8,13 @@ This repository contains **Dockerfile** of [apache-airflow](https://github.com/a
 * Install [Docker Compose](https://docs.docker.com/compose/install/)
 * Following the Airflow release from [Python Package Index](https://pypi.python.org/pypi/apache-airflow)
 
+## Usage
+
+```bash
+make
+```
+
+
 For **LocalExecutor** :
 
     docker-compose -f local.yml up -d
@@ -30,7 +37,7 @@ Go to Admin -> Connections and Edit "postgres_default" set this values (equivale
 For encrypted connection passwords (in Local or Celery Executor), you must have the same fernet_key. By default docker-airflow generates the fernet_key at startup, you have to set an environment variable in the docker-compose (ie: local.yml) file to set the same key accross containers. To generate a fernet_key, inside the airflow container:
 
 ```python
-python -c "from cryptography.fernet import Fernet; FERNET_KEY = Fernet.generate_key().decode(); print(FERNET_KEY)"
+    python -c "from cryptography.fernet import Fernet; FERNET_KEY = Fernet.generate_key().decode(); print(FERNET_KEY)"
 ```
 
 ## Configurating Airflow

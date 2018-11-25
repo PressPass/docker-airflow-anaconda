@@ -1,7 +1,4 @@
 FROM continuumio/anaconda3
-RUN conda install -c conda-forge python-annoy
-#RUN conda install -c conda-forge/label/gcc7 python-annoy
-
 
 # Never prompts the user for choices on installation/configuration of packages
 ENV DEBIAN_FRONTEND noninteractive
@@ -46,15 +43,25 @@ RUN set -ex \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
-    && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
-    && pip install -U pip setuptools wheel \
+    && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow
+
+# Anaconda's Environment file
+COPY config/environment.yml /environment.yml
+RUN conda env create -f environment.yml
+RUN echo "source activate env" > ~/.bashrc
+ENV PATH /opt/conda/envs/env/bin:$PATH
+
+# pip dependencies
+RUN pip install -U pip setuptools wheel \
     && pip install pytz \
     && pip install pyOpenSSL \
     && pip install ndg-httpsclient \
     && pip install pyasn1 \
     && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
-    && pip install 'redis>=2.10.5,<3' \
-    && if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
+    && pip install 'redis>=2.10.5,<3'
+
+# cleaning it up
+RUN if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
     && apt-get purge --auto-remove -yqq $buildDeps \
     && apt-get autoremove -yqq --purge \
     && apt-get clean \
@@ -75,6 +82,9 @@ EXPOSE 8080 5555 8793
 
 USER airflow
 WORKDIR ${AIRFLOW_HOME}
+
+
+
 ENTRYPOINT ["/entrypoint.sh"]
 
 # set default arg for entrypoint
