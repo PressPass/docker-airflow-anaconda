@@ -5,7 +5,8 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TERM linux
 
 # Airflow
-ARG AIRFLOW_VERSION=1.10.9 # gino added this line
+# gino updated this line
+ARG AIRFLOW_VERSION=1.10.9     
 ARG AIRFLOW_HOME=/usr/local/airflow
 ARG AIRFLOW_DEPS=""
 ARG PYTHON_DEPS=""
@@ -47,7 +48,8 @@ RUN set -ex \
 
 # Anaconda's Environment file
 COPY config/environment.yml /environment.yml
-RUN conda update -n base -c defaults conda # gino added this line
+# gino added this line
+RUN conda update -n base -c defaults conda 
 RUN conda env create -f environment.yml
 RUN echo "source activate env" > ~/.bashrc
 ENV PATH /opt/conda/envs/env/bin:$PATH
