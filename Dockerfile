@@ -54,7 +54,7 @@ RUN set -ex \
 RUN apt-get install -y vim && \ 
     apt-get update && \
     apt-get install -y software-properties-common && \
-    add-apt-repository ppa:openjdk-r/ppa && \
+    add-apt-repository ppa:webupd8team/java && \
     apt-get install oracle-java8-installer && \
     #apt-get install -y openjdk-8-jdk && \
     apt-get install -y ant && \
