@@ -7,7 +7,8 @@ ENV TERM linux
 # Airflow
 # gino updated this line
 ARG AIRFLOW_VERSION=1.10.9     
-ARG AIRFLOW_HOME=/usr/local/airflow
+ARG AIRFLOW_USER_HOME=/usr/local/airflow
+ENV AIRFLOW_HOME=${AIRFLOW_USER_HOME}
 ARG AIRFLOW_DEPS=""
 ARG PYTHON_DEPS=""
 ENV AIRFLOW_GPL_UNIDECODE yes
