@@ -53,6 +53,7 @@ RUN set -ex \
 ########################################################
 RUN apt-get install -y vim && \ 
     apt-get update && \
+    apt-get install software-properties-common && \
     add-apt-repository ppa:openjdk-r/ppa && \
     apt-get install -y openjdk-8-jdk && \
     apt-get install -y ant && \
