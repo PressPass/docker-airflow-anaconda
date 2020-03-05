@@ -52,7 +52,7 @@ RUN set -ex \
 # gino added the java lines
 ########################################################
 RUN apt-get install -y vim && \ 
-    apt-get update && \
+    apt-get update 
 RUN conda install -c cyclus java-jdk
     #apt-get install -y software-properties-common && \
     #add-apt-repository ppa:webupd8team/java && \
