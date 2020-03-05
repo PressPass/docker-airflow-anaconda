@@ -6,7 +6,9 @@ ENV TERM linux
 
 # Airflow
 # gino updated this line
+########################################################
 ARG AIRFLOW_VERSION=1.10.9     
+########################################################
 ARG AIRFLOW_USER_HOME=/usr/local/airflow
 ENV AIRFLOW_HOME=${AIRFLOW_USER_HOME}
 ARG AIRFLOW_DEPS=""
@@ -47,10 +49,25 @@ RUN set -ex \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
     && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow
 
+# gino added the java lines
+########################################################
+RUN apt-get install -y openjdk-8-jdk && \
+    apt-get install -y ant && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/ && \
+    rm -rf /var/cache/oracle-jdk8-installer;
+
+# Setting JAVA_HOME environment for PySpark operations
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
+RUN export JAVA_HOME
+########################################################
+
 # Anaconda's Environment file
 COPY config/environment.yml /environment.yml
 # gino added this line
+########################################################
 RUN conda update -n base -c defaults conda 
+########################################################
 RUN conda env create -f environment.yml
 RUN echo "source activate env" > ~/.bashrc
 ENV PATH /opt/conda/envs/env/bin:$PATH
