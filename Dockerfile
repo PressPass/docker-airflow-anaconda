@@ -55,7 +55,8 @@ RUN apt-get install -y vim && \
     apt-get update && \
     apt-get install -y software-properties-common && \
     add-apt-repository ppa:openjdk-r/ppa && \
-    apt-get install -y openjdk-8-jdk && \
+    apt-get install oracle-java8-installer && \
+    #apt-get install -y openjdk-8-jdk && \
     apt-get install -y ant && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/ && \
