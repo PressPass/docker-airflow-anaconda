@@ -51,7 +51,9 @@ RUN set -ex \
 
 # gino added the java lines
 ########################################################
-RUN apt-get update && \
+RUN apt-get install -y vim && \ 
+    apt-get update && \
+    add-apt-repository ppa:openjdk-r/ppa && \
     apt-get install -y openjdk-8-jdk && \
     apt-get install -y ant && \
     apt-get clean && \
