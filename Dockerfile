@@ -53,14 +53,15 @@ RUN set -ex \
 ########################################################
 RUN apt-get install -y vim && \ 
     apt-get update && \
-    apt-get install -y software-properties-common && \
-    add-apt-repository ppa:webupd8team/java && \
-    apt-get install oracle-java8-installer && \
+RUN conda install -c cyclus java-jdk
+    #apt-get install -y software-properties-common && \
+    #add-apt-repository ppa:webupd8team/java && \
+    #apt-get install oracle-java8-installer && \
     #apt-get install -y openjdk-8-jdk && \
-    apt-get install -y ant && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/ && \
-    rm -rf /var/cache/oracle-jdk8-installer;
+    #apt-get install -y ant && \
+    #apt-get clean && \
+    #rm -rf /var/lib/apt/lists/ && \
+    #rm -rf /var/cache/oracle-jdk8-installer;
 
 # Setting JAVA_HOME environment for PySpark operations
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
