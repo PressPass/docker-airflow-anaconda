@@ -64,8 +64,8 @@ RUN conda install -c cyclus java-jdk
     #rm -rf /var/cache/oracle-jdk8-installer;
 
 # Setting JAVA_HOME environment for PySpark operations
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
-RUN export JAVA_HOME
+#ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
+#RUN export JAVA_HOME
 ########################################################
 
 # Anaconda's Environment file
