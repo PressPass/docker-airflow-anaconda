@@ -1,5 +1,5 @@
 ######################################################
-FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04
+#FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04
 ######################################################f1`
 
 FROM continuumio/anaconda3
@@ -102,6 +102,8 @@ RUN if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
         /usr/share/man \
         /usr/share/doc \
         /usr/share/doc-base
+
+RUN conda install -c hcc cuda-driver
 
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
