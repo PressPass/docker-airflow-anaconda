@@ -1,5 +1,7 @@
 FROM continuumio/anaconda3
-
+######################################################
+FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04
+######################################################f1`
 # Never prompts the user for choices on installation/configuration of packages
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM linux
