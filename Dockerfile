@@ -1,7 +1,7 @@
 #FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
 #FROM nvidia/cuda:10.0-base-ubuntu16.04
-#FROM nvidia/cuda:latest
-FROM nvidia/cuda:10.2-base-ubuntu16.04
+FROM nvidia/cuda:latest
+#FROM nvidia/cuda:10.2-base-ubuntu16.04
 
 # Install Anaconda
 CMD ["/bin/bash"]
