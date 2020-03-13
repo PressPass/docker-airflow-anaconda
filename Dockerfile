@@ -1,73 +1,31 @@
-######################################################
-#FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04
-######################################################f1`
-FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04 AS nvidia
-#FROM gcr.io/kaggle-images/python-tensorflow-whl:2.1.0-py36-2 as tensorflow_whl
+FROM nvidia/cuda:latest
 
+# Install Anaconda
+CMD ["/bin/bash"]
+RUN apt-get update && apt-get -y install wget
+RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-2019.10-Linux-x86_64.sh -O ~/anaconda.sh && /bin/bash ~/anaconda.sh -b -p /opt/conda && \
+    rm ~/anaconda.sh && \
+    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate base" >> ~/.bashrc && \
+    find /opt/conda/ -follow -type f -name '*.a' -delete && \
+    find /opt/conda/ -follow -type f -name '*.js.map' -delete && \
+    /opt/conda/bin/conda clean -afy
+RUN apt-get update --fix-missing && \
+    apt-get install -y wget bzip2 ca-certificates \
+    libglib2.0-0 libxext6 libsm6 libxrender1 git mercurial subversion && \
+    apt-get clean
 
-FROM continuumio/anaconda3:latest
-# Never prompts the user for choices on installation/configuration of packages
-ENV DEBIAN_FRONTEND noninteractive
-#ENV TERM linux
+ENV PATH=/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+#CMD ["bash"]
 
-
+# Install Airflow
 #######################################################################################################
-# Cuda support
-COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
-COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.d/
-COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
-
-# Ensure the cuda libraries are compatible with the GPU image.
-# TODO(b/120050292): Use templating to keep in sync.
-ENV CUDA_MAJOR_VERSION=10
-ENV CUDA_MINOR_VERSION=1
-ENV CUDA_PATCH_VERSION=243
-ENV CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION.$CUDA_PATCH_VERSION
-ENV CUDA_PKG_VERSION=$CUDA_MAJOR_VERSION-$CUDA_MINOR_VERSION=$CUDA_VERSION-1
-LABEL com.nvidia.volumes.needed="nvidia_driver"
-LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
-ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
-# The stub is useful to us both for built-time linking and run-time linking, on CPU-only systems.
-# When intended to be used with actual GPUs, make sure to (besides providing access to the host
-# CUDA user libraries, either manually or through the use of nvidia-docker) exclude them. One
-# convenient way to do so is to obscure its contents by a bind mount:
-#   docker run .... -v /non-existing-directory:/usr/local/cuda/lib64/stubs:ro ...
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs"
-ENV NVIDIA_VISIBLE_DEVICES=all
-ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
-ENV NVIDIA_REQUIRE_CUDA="cuda>=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION"
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      cuda-cupti-$CUDA_PKG_VERSION \
-      cuda-cudart-$CUDA_PKG_VERSION \
-      cuda-cudart-dev-$CUDA_PKG_VERSION \
-      cuda-libraries-$CUDA_PKG_VERSION \
-      cuda-libraries-dev-$CUDA_PKG_VERSION \
-      cuda-nvml-dev-$CUDA_PKG_VERSION \
-      cuda-minimal-build-$CUDA_PKG_VERSION \
-      cuda-command-line-tools-$CUDA_PKG_VERSION \
-      libcudnn7=7.6.5.32-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
-      libcudnn7-dev=7.6.5.32-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
-      libnccl2=2.5.6-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
-      libnccl-dev=2.5.6-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
-    ln -s /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION /usr/local/cuda && \
-    ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
-    # See _TF_(MIN|MAX)_BAZEL_VERSION at https://github.com/tensorflow/tensorflow/blob/master/configure.py.
-
-
-# Create a tensorflow wheel for GPU/cuda
-ENV TF_NEED_CUDA=1
-ENV TF_CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION
-# 3.7 is for the K80 and 6.0 is for the P100, 7.5 is for the T4: https://developer.nvidia.com/cuda-gpus
-ENV TF_CUDA_COMPUTE_CAPABILITIES=3.7,6.0,7.5
-ENV TF_CUDNN_VERSION=7
-ENV TF_NCCL_VERSION=2
-ENV NCCL_INSTALL_PATH=/usr/
-
-#######################################################################################################    
 # Airflow
 # gino updated this line
 ########################################################
-ARG AIRFLOW_VERSION=1.10.9     
+ARG AIRFLOW_VERSION=1.10.9
 ########################################################
 ARG AIRFLOW_USER_HOME=/usr/local/airflow
 ENV AIRFLOW_HOME=${AIRFLOW_USER_HOME}
@@ -111,28 +69,16 @@ RUN set -ex \
 
 # gino added the java lines
 ########################################################
-RUN apt-get install -y vim && \ 
-    apt-get update 
+RUN apt-get install -y vim && \
+    apt-get update
 RUN conda install -c cyclus java-jdk
-    #apt-get install -y software-properties-common && \
-    #add-apt-repository ppa:webupd8team/java && \
-    #apt-get install oracle-java8-installer && \
-    #apt-get install -y openjdk-8-jdk && \
-    #apt-get install -y ant && \
-    #apt-get clean && \
-    #rm -rf /var/lib/apt/lists/ && \
-    #rm -rf /var/cache/oracle-jdk8-installer;
-
-# Setting JAVA_HOME environment for PySpark operations
-#ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
-#RUN export JAVA_HOME
 ########################################################
 
 # Anaconda's Environment file
 COPY config/environment.yml /environment.yml
 # gino added this line
 ########################################################
-RUN conda update -n base -c defaults conda 
+RUN conda update -n base -c defaults conda
 ########################################################
 RUN conda env create -f environment.yml
 RUN echo "source activate env" > ~/.bashrc
@@ -159,26 +105,8 @@ RUN if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
         /usr/share/man \
         /usr/share/doc \
         /usr/share/doc-base
-#RUN apt-get update && apt-get install -y gnupg2 && \
-#    wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-ubuntu1604.pin && \
-#    mv cuda-ubuntu1604.pin /etc/apt/preferences.d/cuda-repository-pin-600 && \
-#    wget http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb && \
-#    dpkg -i cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb && \
-#    apt-key add /var/cuda-repo-10-2-local-10.2.89-440.33.01/7fa2af80.pub && \
-#    apt-get update && apt-get -y install cuda 
-    
 
-#RUN apt-get update && apt-get remove --purge '^nvidia-.*' && \
-#    apt-get update && apt-get install -y nvidia* && \ 
-#    apt-get update && apt-get install -y nvidia-cuda* && \
-    #prime-select intel && \
-    #apt --fix-broken install && \
-    #apt update && apt install -y libcublas-dev && \
-#    apt update && apt install -y cuda*
-    #&& apt-get install nvidia-docker2
-    #systemctl daemon-reload && \
-    #&& systemctl restart docker
-    
+
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
