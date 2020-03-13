@@ -102,7 +102,7 @@ RUN if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
         /usr/share/man \
         /usr/share/doc \
         /usr/share/doc-base
-RUN apt-get install -y gnupg2 && \
+RUN apt-get update && apt-get install -y gnupg2 && \
     wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-ubuntu1604.pin && \
     mv cuda-ubuntu1604.pin /etc/apt/preferences.d/cuda-repository-pin-600 && \
     wget http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb && \
