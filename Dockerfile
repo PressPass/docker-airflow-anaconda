@@ -115,10 +115,10 @@ RUN if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
 ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64/
 RUN cd /usr/local/cuda/lib64/ && \
     ln libcudart.so.10.2 libcudart.so.10.0 && \
-    ln libcufft.so.10.2 libcufft.so.10.0 && \
-    ln libcurand.so.10.2 libcurand.so.10.0 && \
-    ln libcusolver.so.10.2 libcusolver.so.10.0 && \
-    ln libcusparse.so.10.2 libcusparse.so.10.0
+    ln libcufft.so.10 libcufft.so.10.0 && \
+    ln libcurand.so.10 libcurand.so.10.0 && \
+    ln libcusolver.so.10 libcusolver.so.10.0 && \
+    ln libcusparse.so.10 libcusparse.so.10.0
     
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
