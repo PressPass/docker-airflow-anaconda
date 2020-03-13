@@ -5,7 +5,7 @@ FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04 AS nvidia
 #FROM gcr.io/kaggle-images/python-tensorflow-whl:2.1.0-py36-2 as tensorflow_whl
 
 
-FROM continuumio/anaconda3
+FROM continuumio/anaconda3:2019.03
 # Never prompts the user for choices on installation/configuration of packages
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM linux
