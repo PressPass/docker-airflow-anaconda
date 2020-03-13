@@ -1,7 +1,8 @@
 #FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
 #FROM nvidia/cuda:10.0-base-ubuntu16.04
-FROM nvidia/cuda:latest
+#FROM nvidia/cuda:latest
 #FROM nvidia/cuda:10.2-base-ubuntu16.04
+FROM nvcr.io/nvidia/tensorflow:20.01-tf1-py3
 
 
 #CMD ["bash"]
