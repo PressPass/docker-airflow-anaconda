@@ -1,12 +1,55 @@
 ######################################################
 #FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04
 ######################################################f1`
+FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04 AS nvidia
 
 FROM continuumio/anaconda3
 # Never prompts the user for choices on installation/configuration of packages
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM linux
 
+
+#######################################################################################################
+# Cuda support
+COPY --from=nvidia /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/
+COPY --from=nvidia /etc/apt/sources.list.d/nvidia-ml.list /etc/apt/sources.list.d/
+COPY --from=nvidia /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/cuda.gpg
+
+# Ensure the cuda libraries are compatible with the GPU image.
+# TODO(b/120050292): Use templating to keep in sync.
+ENV CUDA_MAJOR_VERSION=10
+ENV CUDA_MINOR_VERSION=1
+ENV CUDA_PATCH_VERSION=243
+ENV CUDA_VERSION=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION.$CUDA_PATCH_VERSION
+ENV CUDA_PKG_VERSION=$CUDA_MAJOR_VERSION-$CUDA_MINOR_VERSION=$CUDA_VERSION-1
+LABEL com.nvidia.volumes.needed="nvidia_driver"
+LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
+ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+# The stub is useful to us both for built-time linking and run-time linking, on CPU-only systems.
+# When intended to be used with actual GPUs, make sure to (besides providing access to the host
+# CUDA user libraries, either manually or through the use of nvidia-docker) exclude them. One
+# convenient way to do so is to obscure its contents by a bind mount:
+#   docker run .... -v /non-existing-directory:/usr/local/cuda/lib64/stubs:ro ...
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs"
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+ENV NVIDIA_REQUIRE_CUDA="cuda>=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION"
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      cuda-cupti-$CUDA_PKG_VERSION \
+      cuda-cudart-$CUDA_PKG_VERSION \
+      cuda-cudart-dev-$CUDA_PKG_VERSION \
+      cuda-libraries-$CUDA_PKG_VERSION \
+      cuda-libraries-dev-$CUDA_PKG_VERSION \
+      cuda-nvml-dev-$CUDA_PKG_VERSION \
+      cuda-minimal-build-$CUDA_PKG_VERSION \
+      cuda-command-line-tools-$CUDA_PKG_VERSION \
+      libcudnn7=7.6.5.32-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
+      libcudnn7-dev=7.6.5.32-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
+      libnccl2=2.5.6-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION \
+      libnccl-dev=2.5.6-1+cuda$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION && \
+    ln -s /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION /usr/local/cuda && \
+    ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
+#######################################################################################################    
 # Airflow
 # gino updated this line
 ########################################################
@@ -111,13 +154,13 @@ RUN if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
 #    apt-get update && apt-get -y install cuda 
     
 
-RUN apt-get update && apt-get remove --purge '^nvidia-.*' && \
-    apt-get update && apt-get install -y nvidia* && \ 
-    apt-get update && apt-get install -y nvidia-cuda* && \
+#RUN apt-get update && apt-get remove --purge '^nvidia-.*' && \
+#    apt-get update && apt-get install -y nvidia* && \ 
+#    apt-get update && apt-get install -y nvidia-cuda* && \
     #prime-select intel && \
     #apt --fix-broken install && \
     #apt update && apt install -y libcublas-dev && \
-    apt update && apt install -y cuda*
+#    apt update && apt install -y cuda*
     #&& apt-get install nvidia-docker2
     #systemctl daemon-reload && \
     #&& systemctl restart docker
