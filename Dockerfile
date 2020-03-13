@@ -103,8 +103,14 @@ RUN if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
         /usr/share/doc \
         /usr/share/doc-base
 
-RUN conda install -c hcc cuda-driver
-
+RUN apt-get install nvidia* \ 
+    && apt-get install nvidia-cuda*
+    && prime-select intel
+    && apt install libcublas-dev
+    && apt install cuda
+    #&& apt-get install nvidia-docker2
+    && systemctl daemon-reload
+    #&& systemctl restart docker
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
