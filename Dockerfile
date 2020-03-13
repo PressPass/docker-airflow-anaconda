@@ -109,7 +109,7 @@ RUN cd /usr/local/src/tensorflow && \
     #pip uninstall -y mxnet && \
     # b/126259508 --no-deps prevents numpy from being downgraded.
     #pip install --no-deps mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
-    /tmp/clean-layer.sh
+    #/tmp/clean-layer.sh
     
 # Print out the built .whl files
 #RUN ls -R /tmp/tensorflow*
