@@ -52,30 +52,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ln -s /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION /usr/local/cuda && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
     # See _TF_(MIN|MAX)_BAZEL_VERSION at https://github.com/tensorflow/tensorflow/blob/master/configure.py.
-ENV BAZEL_VERSION=0.29.1
+#ENV BAZEL_VERSION=0.29.1
 RUN apt-get install -y gnupg zip && \ 
-# openjdk-8-jdk && \
     apt-get install -y --no-install-recommends \
       bash-completion \
       zlib1g-dev && \
-    wget --no-verbose "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel_${BAZEL_VERSION}-linux-x86_64.deb" && \
-    dpkg -i bazel_*.deb && \
-    rm bazel_*.deb
-
-# Fetch tensorflow & install dependencies.
-RUN cd /usr/local/src && \
-    git clone https://github.com/tensorflow/tensorflow && \
-    cd tensorflow && \
-    git checkout tags/v2.1.0 && \
-    pip install keras_applications --no-deps && \
-    pip install keras_preprocessing --no-deps
-
-# Create a tensorflow wheel for CPU
-RUN cd /usr/local/src/tensorflow && \
-    cat /dev/null | ./configure && \
-    bazel build --config=opt --config=v2 //tensorflow/tools/pip_package:build_pip_package && \
-    bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_cpu && \
-    bazel clean
 
 # Create a tensorflow wheel for GPU/cuda
 ENV TF_NEED_CUDA=1
@@ -86,34 +67,6 @@ ENV TF_CUDNN_VERSION=7
 ENV TF_NCCL_VERSION=2
 ENV NCCL_INSTALL_PATH=/usr/
 
-RUN cd /usr/local/src/tensorflow && \
-    # TF_NCCL_INSTALL_PATH is used for both libnccl.so.2 and libnccl.h. Make sure they are both accessible from the same directory.
-    ln -s /usr/lib/x86_64-linux-gnu/libnccl.so.2 /usr/lib/ && \
-    cat /dev/null | ./configure && \
-    echo "/usr/local/cuda-${TF_CUDA_VERSION}/targets/x86_64-linux/lib/stubs" > /etc/ld.so.conf.d/cuda-stubs.conf && ldconfig && \
-    bazel build --config=opt \
-                --config=v2 \
-                --config=cuda \
-                --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" \
-                //tensorflow/tools/pip_package:build_pip_package && \
-    rm /etc/ld.so.conf.d/cuda-stubs.conf && ldconfig && \
-    bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_gpu && \
-    bazel clean
-
-# Reinstall packages with a separate version for GPU support.
-#COPY --from=tensorflow_whl /tmp/tensorflow_gpu/*.whl /tmp/tensorflow_gpu/
-#RUN pip uninstall -y tensorflow && \
-#    pip install /tmp/tensorflow_gpu/tensorflow*.whl && \
-#    rm -rf /tmp/tensorflow_gpu && \
-    #conda remove --force -y pytorch torchvision torchaudio cpuonly && \
-    #conda install -y pytorch torchvision torchaudio cudatoolkit=$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION -c pytorch && \
-    #pip uninstall -y mxnet && \
-    # b/126259508 --no-deps prevents numpy from being downgraded.
-    #pip install --no-deps mxnet-cu$CUDA_MAJOR_VERSION$CUDA_MINOR_VERSION && \
-    #/tmp/clean-layer.sh
-    
-# Print out the built .whl files
-#RUN ls -R /tmp/tensorflow*
 #######################################################################################################    
 # Airflow
 # gino updated this line
