@@ -115,7 +115,7 @@ RUN apt-get update && apt-get remove --purge '^nvidia-.*' && \
     apt-get update && apt-get install -y nvidia* && \ 
     apt-get update && apt-get install nvidia-cuda* && \
     #prime-select intel && \
-    apt-get update && apt-get install libcublas-dev && \
+    #apt-get update && apt-get install libcublas-dev && \
     apt-get update && apt-get install cuda && \
     #&& apt-get install nvidia-docker2
     systemctl daemon-reload && \
