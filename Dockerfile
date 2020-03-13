@@ -108,7 +108,7 @@ RUN apt-get update && apt-get install -y gnupg2 && \
     wget http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb && \
     dpkg -i cuda-repo-ubuntu1604-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb && \
     apt-key add /var/cuda-repo-10-2-local-10.2.89-440.33.01/7fa2af80.pub && \
-    apt-get -y install cuda 
+    apt-get update && apt-get -y install cuda 
     
 
 #RUN apt-get install nvidia && \ 
