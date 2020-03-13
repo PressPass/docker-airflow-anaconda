@@ -52,11 +52,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ln -s /usr/local/cuda-$CUDA_MAJOR_VERSION.$CUDA_MINOR_VERSION /usr/local/cuda && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
     # See _TF_(MIN|MAX)_BAZEL_VERSION at https://github.com/tensorflow/tensorflow/blob/master/configure.py.
-#ENV BAZEL_VERSION=0.29.1
-RUN apt-get install -y gnupg zip && \ 
-    apt-get install -y --no-install-recommends \
-      bash-completion \
-      zlib1g-dev && \
+
 
 # Create a tensorflow wheel for GPU/cuda
 ENV TF_NEED_CUDA=1
