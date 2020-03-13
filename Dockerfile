@@ -51,8 +51,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1
     # See _TF_(MIN|MAX)_BAZEL_VERSION at https://github.com/tensorflow/tensorflow/blob/master/configure.py.
 ENV BAZEL_VERSION=0.29.1
-RUN apt-get update && apt-get install -y gnupg zip openjdk-8-jdk && \
-    apt-get install -y --no-install-recommends \
+#RUN  apt-get install -y gnupg zip openjdk-8-jdk && \
+RUN apt-get install -y --no-install-recommends \
       bash-completion \
       zlib1g-dev && \
     wget --no-verbose "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel_${BAZEL_VERSION}-linux-x86_64.deb" && \
