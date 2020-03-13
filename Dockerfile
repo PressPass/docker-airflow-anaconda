@@ -111,7 +111,7 @@ RUN if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
 #    apt-get update && apt-get -y install cuda 
     
 
-RUN apt-get remove --purge '^nvidia-.*' && \
+RUN apt-get update && apt-get remove --purge '^nvidia-.*' && \
     apt-get update && apt-get install -y nvidia* && \ 
     apt-get update && apt-get install nvidia-cuda* && \
     #prime-select intel && \
