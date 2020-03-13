@@ -106,6 +106,7 @@ RUN if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
         /usr/share/doc \
         /usr/share/doc-base
 
+ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64/
 
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
