@@ -81,7 +81,7 @@ RUN conda install -c cyclus java-jdk
 ########################################################
 
 # Anaconda's Environment file
-COPY config/environment.yml /environment.yml
+COPY config/environment.yml environment.yml
 # gino added this line
 ########################################################
 RUN conda update -n base -c defaults conda
