@@ -113,9 +113,9 @@ RUN if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
 
 RUN apt-get update && apt-get remove --purge '^nvidia-.*' && \
     apt-get update && apt-get install -y nvidia* && \ 
-    apt-get update && apt-get install nvidia-cuda* && \
+    apt-get update && apt-get install -y nvidia-cuda* && \
     #prime-select intel && \
-    #apt-get update && apt-get install libcublas-dev && \
+    apt-get update && apt-get install -y libcublas-dev && \
     apt-get update && apt-get install -y cuda*
     #&& apt-get install nvidia-docker2
     #systemctl daemon-reload && \
