@@ -4,8 +4,8 @@
 #FROM nvidia/cuda:10.2-base-ubuntu16.04
 #FROM nvcr.io/nvidia/tensorflow:20.01-tf1-py3
 #FROM nvcr.io/nvidia/tensorflow:19.12-tf1-py3
-FROM nvcr.io/nvidia/tensorflow:19.02-py3
-
+FROM nvcr.io/nvidia/tensorflow:19.05-py3
+# https://docs.nvidia.com/deeplearning/frameworks/tensorflow-release-notes/rel_19.02.html#rel_19.02
 
 
 
