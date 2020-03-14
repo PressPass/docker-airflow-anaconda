@@ -48,7 +48,8 @@ RUN set -ex \
         $buildDeps \
         freetds-bin \
         build-essential \
-        libmysqlclient-dev \
+        #default-libmysqlclient-dev \ # nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04 fails this but succeeds libmysqlclient-dev
+        libmysqlclient-dev \ 
         apt-utils \
         curl \
         rsync \
