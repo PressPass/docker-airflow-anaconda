@@ -3,7 +3,8 @@
 #FROM nvidia/cuda:latest
 #FROM nvidia/cuda:10.2-base-ubuntu16.04
 #FROM nvcr.io/nvidia/tensorflow:20.01-tf1-py3
-FROM nvcr.io/nvidia/tensorflow:19.12-tf1-py3
+#FROM nvcr.io/nvidia/tensorflow:19.12-tf1-py3
+FROM nvcr.io/nvidia/tensorflow:19.02-py3
 
 
 
@@ -121,7 +122,8 @@ RUN cd /usr/local/cuda/lib64/ && \
     ln libcufft.so.10 libcufft.so.10.0 && \
     ln libcurand.so.10 libcurand.so.10.0 && \
     ln libcusolver.so.10 libcusolver.so.10.0 && \
-    ln libcusparse.so.10 libcusparse.so.10.0
+    ln libcusparse.so.10 libcusparse.so.10.0 && \
+    ln libcublas.so.10.0 libcublas.so.10.0
     
 COPY script/entrypoint.sh /entrypoint.sh
 COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
