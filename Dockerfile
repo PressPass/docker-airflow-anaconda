@@ -1,3 +1,4 @@
+# This Dockerfile is modified for mlflow compatibility from eracle/docker-airflow-anaconda
 FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
 
 # https://docs.nvidia.com/deeplearning/frameworks/tensorflow-release-notes/rel_19.02.html#rel_19.02
