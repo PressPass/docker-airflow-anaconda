@@ -1,22 +1,9 @@
 FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
 
-#FROM nvidia/cuda:10.0-base-ubuntu16.04
-#FROM nvidia/cuda:latest
-#FROM nvidia/cuda:10.2-base-ubuntu16.04
-#FROM nvcr.io/nvidia/tensorflow:20.01-tf1-py3
-#FROM nvcr.io/nvidia/tensorflow:19.12-tf1-py3
-#FROM nvcr.io/nvidia/tensorflow:19.05-py3
 # https://docs.nvidia.com/deeplearning/frameworks/tensorflow-release-notes/rel_19.02.html#rel_19.02
-
-
-
-#CMD ["bash"]
 
 # Install Airflow
 #######################################################################################################
-# Airflow
-# gino updated this line
-########################################################
 ARG AIRFLOW_VERSION=1.10.9
 ########################################################
 ARG AIRFLOW_USER_HOME=/usr/local/airflow
@@ -79,7 +66,7 @@ RUN apt-get update --fix-missing && \
 ENV PATH=/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
-# gino added the java lines
+# Install Java-jdk
 ########################################################
 RUN apt-get install -y vim && \
     apt-get update
@@ -88,10 +75,7 @@ RUN conda install -c cyclus java-jdk
 
 # Anaconda's Environment file
 COPY config/environment.yml environment.yml
-# gino added this line
-########################################################
 RUN conda update -n base -c defaults conda
-########################################################
 RUN conda env create -f environment.yml
 RUN echo "source activate env" > ~/.bashrc
 ENV PATH /opt/conda/envs/env/bin:$PATH
